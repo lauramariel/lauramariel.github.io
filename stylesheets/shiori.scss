@@ -3,7 +3,7 @@
 
 $container-large-desktop: 970px;
 
-$font-family-base: "Merriweather", "Helvetica Neue", Arial, sans-serif;
+$font-family-base: "Montserrat", "Merriweather", "Helvetica Neue", Arial, sans-serif;
 $headings-font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
 $headings-font-weight: 700;
 
@@ -188,6 +188,12 @@ h3 {
     position: absolute;
     left: $navbar-padding-horizontal;
     height: ($navbar-height + 34px) / 2;
+  }
+}
+
+.social {
+  @media (min-width: $screen-sm-min) {
+    padding: 16.5px 5px !important;
   }
 }
 
