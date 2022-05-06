@@ -5,7 +5,7 @@ title: "laurajordana.com"
 # This is used by feed.xml. Uncomment if you want to use it.
 # description: "..."
 
-gems:
+plugins:
   - jemoji
 exclude:
   - "README.md"
