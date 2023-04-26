@@ -1,52 +1,22 @@
 ---
 layout: index
 ---
-<!-- <div>
-  <div class="post-content">
-  <b>Recent Posts</b>
-  {% for post in site.posts %}
-    {% if post.render != false %}
-      <p>
-        <a href="{{ post.url | prepend:site.baseurl}}" class="post-title-archive">{{ post.title }}</a>
-        <small class="text-muted">{{ post.date | date_to_string }}</small>
-      </p>
-    {% endif %}
-  {% endfor %}
-  </div>
-</div> -->
-<!-- <h2>Samples of Work</h2> -->
-<div>
-  <p>  <strong>Videos:</strong></p>
-  <ul>
-    <li><a href="https://www.youtube.com/watch?v=q4HFcGMO11Q" target="_blank">New Playbook Actions in Nutanix X-Play PC.2021.7 | Tech Bytes | Nutanix University</a></li>
-    <li><a href="https://www.youtube.com/watch?v=jtsAx4etUII" target="_blank">Get The Data You're Looking For | Tech Bytes | Nutanix University</a></li>
-    <li><a href="https://www.youtube.com/watch?v=YfrFszGN6Q0" target="_blank">Easy automation with 4 new actions in Nutanix X-Play PC.2022.1 | Tech Bytes | Nutanix University</a></li>
-    <li><a href="https://www.youtube.com/watch?v=ihAfqkN4lkg" target="_blank">Prism for IT Operations Features | Tech Bytes | Nutanix University</a></li>
-    <li><a href="https://www.youtube.com/watch?v=MJfETH-bU-A" target="_blank">Setting up Cluster RBAC | Tech Bytes | Nutanix University</a></li>
-    <li><a href="https://www.youtube.com/watch?v=WtM3hBJQVNY" target="_blank">Capacity Planning | Tech Bytes | Nutanix University</a></li>
-    <li><a href="https://www.youtube.com/watch?v=SbFbIuFv5xc" target="_blank">Nutanix X-Play and ServiceNow Integration | Tech Bytes | Nutanix University</a></li>
-    <li><a href="https://www.youtube.com/watch?v=xMLrALGPHZ4" target="_blank">Automated Remediation with X-Play | Tech Bytes | Nutanix University</a></li>
-  </ul>
-  <p>  <strong>Blogs/Code Samples:</strong></p>
-  <ul>
-  <li><a href="https://www.nutanix.dev/2022/01/19/getting-started-with-nutanix-x-play/" target="_blank">Getting Started With Nutanix X-Play</a></li>
-  <li><a href="https://www.nutanix.dev/2021/12/22/code-sample-collecting-cluster-wide-vm-performance-data-with-python/" target="_blank">Collecting Cluster Wide VM Performance Data With Python</a></li>
-  <li><a href="https://www.nutanix.dev/2019/12/02/calm-cookbook-recipe-1-blueprint-import/" target="_blank">Calm Cookbook - Blueprint Import</a></li>
-  <li><a href="https://next.nutanix.com/community-blog-154/set-up-an-approval-workflow-in-test-drive-40380" target="_blank">Set Up An Approval Workflow in Test Drive</a></li>
-  <li><a href="https://next.nutanix.com/community-blog-154/test-drive-application-automation-and-lifecycle-management-today-37853" target="_blank">Test Drive Application Automation and Lifecycle Management Today</a></li>
-  <li><a href="https://next.nutanix.com/community-blog-154/deep-dive-into-disaster-recovery-as-a-service-draas-with-test-drive-37693" target="_blank">Deep-dive into Disaster Recovery as a Service (DRaaS) with Test Drive</a></li>
-  <li><a href="https://next.nutanix.com/community-blog-154/get-hands-on-with-nutanix-test-drive-2-0-34015" target="_blank">Get Hands-On with Nutanix Test Drive 2.0</a></li>
-  <li><a href="https://next.nutanix.com/community-blog-154/maintaining-compliance-with-worm-for-nutanix-objects-33239" target="_blank">Maintaining Compliance with WORM for Nutanix Objects</a></li>
-  <li><a href="https://next.nutanix.com/community-blog-154/using-nutanix-objects-as-an-s3-compatible-backup-target-32959" target="_blank">Using Nutanix Objects as an S3-Compatible Backup Target</a></li>
-  <li><a href="https://next.nutanix.com/community-blog-154/nutanix-objects-and-containerized-architecture-32020" target="_blank">Nutanix Objects and Containerized Architecture</a></li>
-  </ul>
 
-  <p><strong>Speaking:</strong></p>
-  <ul>
-    <li><a href="https://www.youtube.com/watch?v=LUsBgfiCyOA&t=5550" target="_blank">Nutanix .NEXT 2019 Anaheim Keynote</a></li>
-    <li><a href="https://youtu.be/v1dz98ZwJB0?t=132" target="_blank">Nutanix .NEXT 2019 Copenhagen Keynote</a></li>
-    <li><a href="https://youtu.be/w23_m6T0dd4?t=2897" target="_blank">Nutanix .NEXT 2020 Virtual Keynote</a></li>
-    <li><a href="https://www.youtube.com/watch?v=ytU8p8Jd0zU&t=12s" target="_blank">Nutanix .NEXT 2021 Virtual Keynote</a></li>
-    <li><a href="https://www.youtube.com/watch?v=owlLY13PEmg" target="_blank">Microsoft Ignite - What’s new in the world of Hybrid Cloud? Find out with Nutanix and Azure</a></li>
-  </ul>
+{% for post in site.posts limit:site.data.theme.num_home_posts %}
+  {% if post.render != false %}
+    <div class="post-header-home">
+      <h1 class="post-title-home">
+        <a href="{{ post.url | prepend:site.baseurl }}">{{ post.title }}</a>
+      </h1>
+      {% include post-header-home.html %}
+    </div>
+    <div class="post-excerpt-home">
+      {{ post.excerpt }}
+      <p class="text-right"><a href="{{ post.url | prepend:site.baseurl }}">Continue Reading &rarr;</a></p>
+    </div>
+  {% endif %}
+{% endfor %}
+<hr>
+<div class="home-read-more">
+  <a href="{{ "/archive" | prepend:site.baseurl }}" class="btn btn-primary btn-block btn-lg">View All Posts →</a>
 </div>
