@@ -3,6 +3,7 @@ layout: post
 title:  "New Actions in Nutanix X-Play in PC.2021.7"
 date:   2021-08-04 20:37:40 -0700
 categories: aiops, automation, prism ops, nutanix
+render: false
 ---
 With the release of Nutanix Prism Central 2021.7 comes additional actions to Nutanix X-Play. Nutanix X-Play is a simple low-code, no-code automation tool built into Nutanix Prism Central that helps you automate routine operations and tasks.
 
