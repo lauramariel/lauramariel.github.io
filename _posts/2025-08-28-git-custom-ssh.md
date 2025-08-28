@@ -4,7 +4,7 @@ title:  "Setting up Github repo access with custom SSH configs"
 date:  2025-08-28 15:40:56 -0700
 categories: github, git, ssh
 ---
-### Using Custom SSH with Github
+## Using Custom SSH with Github
 
 1. Make sure the private key file defined exists and that the corresponding public key is defined in the repo's deploy keys. If not, add them.
 
@@ -31,7 +31,7 @@ categories: github, git, ssh
     git pull
     ```
 
-### Other useful commands
+## Other useful commands
 
 * Setting user for the repo
     ```
