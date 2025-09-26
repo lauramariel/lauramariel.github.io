@@ -6,6 +6,8 @@ categories: github, git, ssh
 ---
 ## Using Custom SSH with Github
 
+If using unique deploy keys on GitHub for each repo.
+
 1. Make sure the private key file defined exists and that the corresponding public key is defined in the repo's deploy keys. If not, add them.
 
     ~/.ssh/config format:
