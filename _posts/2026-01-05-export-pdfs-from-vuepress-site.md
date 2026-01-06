@@ -64,6 +64,16 @@ import path from 'path';
       await page.waitForSelector('.theme-default-content', { state: 'visible', timeout: 5000 });
       
       await page.emulateMedia({ media: 'screen' });
+
+      // Remove sidebar from rendered pages
+      await page.addStyleTag({
+        content: `
+        .sidebar, .navbar, .page-nav { display: none !important; }
+        .page { padding: 0 !important; }
+        .theme-default-content { max-width: 100% !important; margin: 0 !important; }
+        `
+      });
+
       await page.pdf({
         path: filePath,
         format: 'A4',
@@ -89,4 +99,15 @@ npm run dev
 Playwright will launch the site in headless mode via Chromium, render each page, and save the files to the outputDir defined in the script.
 ```
 node export.mjs
+```
+
+### How to combine PDFs
+
+I installed GhostScript and tried various options but the images kept rendering blank.
+
+ChatGPT recommended `pdfunite` by Poppler and that worked perfectly :)
+
+```
+brew install poppler
+pdfunite *.pdf combined.pdf
 ```
