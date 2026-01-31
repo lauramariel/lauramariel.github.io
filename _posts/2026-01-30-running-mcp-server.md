@@ -5,8 +5,6 @@ date: 2026-01-30 09:59:00 -0800
 categories: ai, mcp, genai
 ---
 
-# Running Experimental Prism MCP Server, Part 1 - Deployment
-
 Documenting my experience following this [post](https://nai.howntnx.win/nkp_tutorials/nkp_mcp_lab/nkp_nai_mcp) to deploy an experimental Prism MCP Server on NKP.
 
 ## Versions used
