@@ -286,10 +286,11 @@ EOF
 curl https://$HOSTNAME/health
 ```
 
-### Optional - Execute mcp-remote npm module for testing
+### Optional - Execute mcp-remote and mcp-inspect npm modules for testing
 
+In one terminal, run the following to start the server
 ```
-[nutanix@nkp-boot ~]$ npx -y mcp-remote https://mcp-server-10-54-90-16.sslip.nutanixdemo.com/mcp
+$ npx -y mcp-remote https://$HOSTNAME/mcp
 [3395582] Using automatically selected callback port: 14045
 [3395582] Discovering OAuth server configuration...
 [3395582] [3395582] Connecting to remote server: https://mcp-server-10-54-90-16.sslip.nutanixdemo.com/mcp
@@ -299,3 +300,81 @@ curl https://$HOSTNAME/health
 [3395582] Proxy established successfully between local STDIO and remote StreamableHTTPClientTransport
 [3395582] Press Ctrl+C to exit
 ```
+
+In another terminal, create a config.json file that looks like this
+
+```
+{
+  "mcpServers": {
+    "remote": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://$HOSTNAME"
+      ]
+    }
+  }
+}
+```
+
+Then start the mcp-inspect tool
+
+```
+$ npx -y mcp-inspect config.json
+```
+
+Inside the mcp-inspect tool, press `C` to connect
+
+![mcp-inspect interface](../images/mcp-inspect-tui.png)
+
+Use the tab + arrow keys to navigate.
+
+### Lightweight MCP Client to list tools from MCP Server
+
+Or you can run a [script](https://raw.githubusercontent.com/lauramariel/nai/refs/heads/main/mcp/mcp_client.py) to list all the tools from the MCP server.
+
+```
+# Download script
+wget https://raw.githubusercontent.com/lauramariel/nai/refs/heads/main/mcp/mcp_client.py
+
+# Update script with your hostname
+sed -i "s/mcp-server.example.org/$HOSTNAME/g" mcp_client.py
+
+# Run the script
+python3 mcp_client.py
+```
+
+The output should look similar to this
+
+```
+=== Available Tools ===
+
+Tool: category_count
+Description: Count category resources
+Input schema:
+{
+  "properties": {
+    "filter": {
+      "description": "Optional text filter (interpreted by LLM)",
+      "type": "string"
+    }
+  },
+  "type": "object"
+}
+----------------------------------------
+Tool: category_list
+Description: List category resources
+Input schema:
+{
+  "properties": {
+    "filter": {
+      "description": "Optional text filter (interpreted by LLM)",
+      "type": "string"
+    }
+  },
+  "type": "object"
+}
+```
+
+... and so on
