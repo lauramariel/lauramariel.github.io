@@ -249,7 +249,7 @@ kubectl create secret tls mcp-cert --cert=/path/to/cert --key=/path/to/key --dry
 export INGRESS_IP=$(kubectl get ingress kommander-kommander-ui -n kommander -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 # Set hostname to whatever your FQDN needs to be
-export HOSTNAME=mcp-nutanix-${INGRESS_IP//./-}.sslip.nutanixdemo.com
+export MCP_HOSTNAME=mcp-nutanix-${INGRESS_IP//./-}.sslip.nutanixdemo.com
 ```
 
 ### Apply the ingress config
@@ -265,7 +265,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls: "false"
 spec:
   rules:
-  - host: $HOSTNAME
+  - host: $MCP_HOSTNAME
     http:
       paths:
       - backend:
@@ -277,20 +277,20 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - HOSTNAME
+    - $MCP_HOSTNAME
     secretName: mcp-cert
 EOF
 ```
 ### Check the health of the MCPServer resource
 ```
-curl https://$HOSTNAME/health
+curl https://$MCP_HOSTNAME/health
 ```
 
 ### Optional - Execute mcp-remote and mcp-inspect npm modules for testing
 
 In one terminal, run the following to start the server
 ```
-$ npx -y mcp-remote https://$HOSTNAME/mcp
+$ npx -y mcp-remote https://$MCP_HOSTNAME/mcp
 [3395582] Using automatically selected callback port: 14045
 [3395582] Discovering OAuth server configuration...
 [3395582] [3395582] Connecting to remote server: https://mcp-server-10-54-90-16.sslip.nutanixdemo.com/mcp
@@ -311,7 +311,7 @@ In another terminal, create a config.json file that looks like this
       "args": [
         "-y",
         "mcp-remote",
-        "https://$HOSTNAME"
+        "https://$MCP_HOSTNAME"
       ]
     }
   }
@@ -339,7 +339,7 @@ Or you can run a [script](https://raw.githubusercontent.com/lauramariel/nai/refs
 wget https://raw.githubusercontent.com/lauramariel/nai/refs/heads/main/mcp/mcp_client.py
 
 # Update script with your hostname
-sed -i "s/mcp-server.example.org/$HOSTNAME/g" mcp_client.py
+sed -i "s/mcp-server.example.org/$MCP_HOSTNAME/g" mcp_client.py
 
 # Run the script
 python3 mcp_client.py
