@@ -8,13 +8,21 @@ layout: page
 {% for tag in tags %}
   {% assign tag_name = tag[0] %}
   {% assign tag_posts = tag[1] %}
-  <h2 id="{{ tag_name | slugify }}" class="tag-heading">{{ tag_name }}</h2>
-  <div class="post-list">
-    {% for post in tag_posts %}
-      {% if post.render != false %}
-        {% include post-list-item.html post=post %}
-      {% endif %}
-    {% endfor %}
-  </div>
+  {% assign visible_count = 0 %}
+  {% for post in tag_posts %}
+    {% if post.render != false %}
+      {% assign visible_count = visible_count | plus: 1 %}
+    {% endif %}
+  {% endfor %}
+  {% if visible_count > 0 %}
+    <h2 id="{{ tag_name | slugify }}" class="tag-heading">{{ tag_name }}</h2>
+    <div class="post-list">
+      {% for post in tag_posts %}
+        {% if post.render != false %}
+          {% include post-list-item.html post=post %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
 {% endfor %}
 </div>
