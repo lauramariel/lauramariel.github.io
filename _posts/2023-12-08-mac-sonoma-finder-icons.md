@@ -2,7 +2,7 @@
 layout: post
 title:  "Mac Sonoma Finder Icons Disappeared"
 date:   2023-12-08 17:12:00 -0700
-categories: mac, workstation
+tags: [mac, workstation]
 ---
 After upgrading to Sonoma 14 I noticed the icons in the Finder window had been replaced by text.
 

@@ -1,0 +1,9 @@
+<div class="post-list-item">
+  <h2 class="post-list-title"><a href="{{ include.post.url | prepend: site.baseurl }}">{{ include.post.title }}</a></h2>
+  <p class="post-list-meta">
+    {{ include.post.date | date: "%b %-d, %Y" }}
+    {% assign words = include.post.content | strip_html | number_of_words %}
+    {% assign read_time = words | divided_by: 200 | plus: 1 %}
+    &middot; {{ read_time }} min read
+  </p>
+</div>

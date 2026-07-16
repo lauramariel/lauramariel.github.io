@@ -2,7 +2,7 @@
 layout: post
 title:  "Exporting PDFs from VuePress Site"
 date: 2026-01-05 22:27:06 -0800
-categories: vuepress, javascript
+tags: [vuepress, javascript]
 ---
 
 ## How to create PDFs of vuepress site

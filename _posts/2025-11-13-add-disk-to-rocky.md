@@ -2,7 +2,7 @@
 layout: post
 title:  "Adding additional disk to Rocky 9.6 VM on Nutanix AHV"
 date:  2025-11-13 12:30:35 -0800
-categories: linux, storage
+tags: [linux, storage]
 ---
 1. Attach additional SCSI Disk in Prism Central
 

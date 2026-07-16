@@ -2,7 +2,7 @@
 layout: post
 title:  "Test Drive Prism for IT Ops"
 date:   2021-11-03 9:50:40 -0700
-categories: aiops, automation, prism ops, nutanix
+tags: [aiops, automation, "prism ops", nutanix]
 render: false
 ---
 The Nutanix Test Drive for AIOps and Automation allows you to get hands on with your own Nutanix cluster and try out some of the features in Prism Pro to make your life as an IT admin easier.

@@ -2,7 +2,7 @@
 layout: post
 title:  "Setting up Github repo access with custom SSH configs"
 date:  2025-08-28 15:40:56 -0700
-categories: github, git, ssh
+tags: [github, git, ssh]
 ---
 ## Using Custom SSH with Github
 
