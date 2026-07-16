@@ -1,73 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ "/stylesheets/shiori.css" | prepend:site.baseurl }}">
-    <link href='//fonts.googleapis.com/css?family=Montserrat:700,400' rel='stylesheet' type='text/css'>
-    <link href='//fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
-    <link rel="shortcut icon" href="{{ "/favicon.ico" | prepend:site.baseurl }}">
+    <link rel="stylesheet" href="{{ "/stylesheets/main.css" | prepend: site.baseurl }}">
+    <link href="//fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="canonical" href="{{ page.url | replace: 'index.html','' | prepend: site.baseurl | prepend: site.url }}">
+    <link rel="shortcut icon" href="{{ "/favicon.ico" | prepend: site.baseurl }}">
+    <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}">
     <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <script>
+      (function () {
+        var stored = localStorage.getItem('theme');
+        var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
     {% include head.html %}
   </head>
   <body>
-  {% if site.data.theme.color == "default" %}
-    <div class="navbar navbar-default navbar-static-top">
-  {% else %}
-    <div class="navbar navbar-inverse navbar-static-top">
-  {% endif %}
-      <div class="container">
-        <div class="navbar-header">
-          <div class="navbar-toggle-wrapper visible-xs">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".js-navbar-collapse">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-          </div>
-          <!-- <a href="{{ "/" | prepend:site.baseurl }}" class="navbar-brand">{{ site.title }}</a> -->
-        </div>
-        <div class="collapse navbar-collapse js-navbar-collapse">
-          <ul class="navbar-nav nav" data-purplecoat="shiori" data-purplecoat-label="nav.html">
+    <header class="site-nav">
+      <div class="site-nav-inner">
+        <a href="{{ "/" | prepend: site.baseurl }}" class="site-brand">{{ site.title }}</a>
+        <button type="button" class="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Toggle navigation">
+          <span></span><span></span><span></span>
+        </button>
+        <nav id="nav-links" class="nav-links">
+          <ul class="nav-list">
             {% include nav.html %}
           </ul>
-          <ul class="navbar-nav nav navbar-right" data-purplecoat="shiori" data-purplecoat-label="nav-right.html">
+          <ul class="nav-list nav-list-right">
             {% include nav-right.html %}
           </ul>
-        </div>
+        </nav>
       </div>
-    </div>
-    <div class="container">
-      <div class="row">
-        {% if page.hide_sidebar or site.data.theme.hide_sidebar %}
-          <div class="col-sm-12">
-            {{ content }}
-          </div>
-        {% else %}
-          <div class="col-sm-8">
-            {{ content }}
-          </div>
-          <div class="col-sm-4">
-            {% include sidebar.html %}
-          </div>
-        {% endif %}
-      </div>
-      <div class="row footer">
-        <div class="col-sm-12 text-center">
-          {% include footer.html %}
-        </div>
-      </div>
-    </div>
-    <script src="{{ "/javascripts/jquery.min.js" | prepend:site.baseurl }}"></script>
-    <script src="{{ "/javascripts/bootstrap.min.js" | prepend:site.baseurl }}"></script>
-    <script src="{{ "/javascripts/purplecoat-min.js" | prepend:site.baseurl }}"></script>
+    </header>
+    <main class="site-main">
+      {{ content }}
+    </main>
+    <footer class="site-footer">
+      {% include footer.html %}
+    </footer>
     <script src="https://kit.fontawesome.com/7c5e474110.js" crossorigin="anonymous"></script>
+    <script src="{{ "/javascripts/main.js" | prepend: site.baseurl }}"></script>
     {% include scripts.html %}
   </body>
 </html>
