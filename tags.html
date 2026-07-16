@@ -1,0 +1,20 @@
+---
+title: Tags
+permalink: "tags/index.html"
+layout: page
+---
+{% assign tags = site.tags | sort %}
+<div class="tags-page">
+{% for tag in tags %}
+  {% assign tag_name = tag[0] %}
+  {% assign tag_posts = tag[1] %}
+  <h2 id="{{ tag_name | slugify }}" class="tag-heading">{{ tag_name }}</h2>
+  <div class="post-list">
+    {% for post in tag_posts %}
+      {% if post.render != false %}
+        {% include post-list-item.html post=post %}
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endfor %}
+</div>
