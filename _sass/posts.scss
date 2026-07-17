@@ -24,10 +24,6 @@
 }
 
 .post-list-title a {
-  color: var(--color-fg);
-}
-
-.post-list-title a:hover {
   color: var(--color-accent);
 }
 
@@ -60,6 +56,7 @@
 
 .post-title-main {
   margin-bottom: 0.25rem;
+  color: var(--color-accent);
 }
 
 .post-meta {
