@@ -14,7 +14,7 @@ tags: [linux, storage]
 
 3. Identify the new device with `fdisk`
 
-    ```
+    ```console
     $ sudo fdisk -l
     Disk /dev/sda: 20 GiB, 21474836480 bytes, 41943040 sectors
     Disk model: VDISK
@@ -84,7 +84,7 @@ tags: [linux, storage]
 
 11. create a directory and mount the filesystem
 
-    ```
+    ```bash
     sudo mkdir /mnt/new
     sudo mount /dev/sdb /mnt/new
     ```

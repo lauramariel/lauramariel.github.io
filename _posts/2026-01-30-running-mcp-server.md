@@ -12,7 +12,7 @@ Documenting my experience following this [post](https://nai.howntnx.win/nkp_tuto
 * Toolhive v0.8.3
 
 ## Prep environment variables
-```
+```bash
 export REGISTRY_URL=https://registry.example.org/mcp
 export REGISTRY_HOST=registry.example.org
 export REGISTRY_USERNAME=admin
@@ -36,11 +36,11 @@ export NUTANIX_ENDPOINT=pc.example.com # or IP address
 
 From the [docs](https://docs.stacklok.com/toolhive/guides-cli/):
 
-```The ToolHive CLI (thv) is a command-line tool that allows you to deploy and manage MCP servers on your local machine or in development environments.  ```
+> The ToolHive CLI (thv) is a command-line tool that allows you to deploy and manage MCP servers on your local machine or in development environments.
 
 In my set up I'm installing it on my Rocky Linux jumphost used to manage my Kubernetes clusters. I decided to install the latest version found on [Github](https://github.com/stacklok/toolhive/releases). As of the time of this writing this was v0.8.3.
 
-```
+```bash
 mkdir $HOME/mcp
 cd $HOME/mcp
 curl -LO https://github.com/stacklok/toolhive/releases/download/v0.8.3/toolhive_0.8.3_linux_amd64.tar.gz
@@ -53,7 +53,7 @@ Note that `curl -L` is needed to handle the HTTP redirection that GitHub is usin
 
 ### Verify THV binary
 
-```
+```bash
 thv version
 ```
 
@@ -73,20 +73,20 @@ Next, we'll use the Toolhive CLI to build a containerized MCP server image direc
 
 ### Build Dockerfile
 First, we'll build a Dockerfile that will be used to create the image.
-```
+```bash
 thv build --tag mcp-nutanix:latest go://github.com/thunderboltsid/mcp-nutanix@latest -o Dockerfile
 ```
 ### Create the Docker image
 Then, we'll create the image. Note that go:// is a Toolhive-specific URI scheme, which provides unique instructions for the Toolhive CLI to define how to handle the source code. In this case it tells Toolhive which build environment to use (in this case Go)
 
-```
+```bash
 thv build --tag mcp-nutanix:latest go://.
 ```
 
 ### Validate image
 
 Next, we'll validate that image architecture matches linux/amd64
-```
+```bash
 docker image inspect mcp-nutanix:latest --format '{{.Architecture}}{{.Os}}'
 ```
 
@@ -96,7 +96,7 @@ First, create a project called mcp in Harbor registry
 
 Then, run the following to tag and push the image:
 
-```
+```bash
 source ~/.env
 docker login ${REGISTRY_HOST} -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD}
 docker tag mcp-nutanix:latest ${REGISTRY_HOST}/mcp/mcp-nutanix:latest
@@ -110,14 +110,14 @@ docker push ${REGISTRY_HOST}/mcp/mcp-nutanix:latest
 Make sure you are connected to the correct K8s cluster
 
 Example commands:
-```
+```bash
 kubectl cluster-info
 kubectl config current-context
 ```
 
 If not, update KUBECONFIG variable with the right config file.
 
-```
+```bash
 export KUBECONFIG=/path/to/kubeconfig
 ```
 
@@ -125,14 +125,14 @@ export KUBECONFIG=/path/to/kubeconfig
 
 This registers the new object types (e.g. MCPServer, Tool) with the Kubernetes API
 
-```
+```bash
 helm upgrade -i toolhive-operator-crds \
 oci://ghcr.io/stacklok/toolhive/toolhive-operator-crds
 ```
 
 ### Install the Toolhive operator
 
-```
+```bash
 helm upgrade -i toolhive-operator \
 oci://ghcr.io/stacklok/toolhive/toolhive-operator \
 -n toolhive-system --create-namespace
@@ -143,7 +143,7 @@ oci://ghcr.io/stacklok/toolhive/toolhive-operator \
 At this point you should see the toolhive-operator pod running in the toolhive-system namespace:
 
 If you have kubens installed
-```
+```bash
 kubens toolhive-system
 kubectl get pods
 ```
@@ -155,7 +155,7 @@ toolhive-operator-5bcb8dbfd4-2zmzw   1/1     Running   0          53s
 ```
 
 ### Create registry secret
-```
+```bash
 kubectl create secret docker-registry regcred \
 --docker-server=${REGISTRY_HOST} \
 --docker-username=${REGISTRY_USERNAME} \
@@ -164,7 +164,7 @@ kubectl create secret docker-registry regcred \
 ```
 
 ### Deploy MCP Server
-```
+```yaml
 cat <<EOF | kubectl apply -f -
 apiVersion: toolhive.stacklok.dev/v1alpha1
 kind: MCPServer
@@ -212,7 +212,7 @@ EOF
 
 ### Check the health
 
-```
+```bash
 kubectl get mcpserver
 ```
 
@@ -225,7 +225,7 @@ nutanix   Running   http://mcp-nutanix-proxy.toolhive-system.svc.cluster.local:8
 
 You should also see two "nutanix" pods running.
 
-```
+```console
 [nutanix@nkp-boot ~]$ k get pods
 NAME                               READY   STATUS    RESTARTS   AGE
 nutanix-0                          1/1     Running   0          1m
@@ -242,10 +242,12 @@ We'll use the pre-deployed Traefik ingress that comes with NKP
 
 ### Create secret called mcp-cert with certificate for our domain
 
+```bash
 kubectl create secret tls mcp-cert --cert=/path/to/cert --key=/path/to/key --dry-run=client -o yaml | kubectl apply -f -
+```
 
 ### Get the IP for the Traefik ingress
-```
+```bash
 export INGRESS_IP=$(kubectl get ingress kommander-kommander-ui -n kommander -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
 # Set hostname to whatever your FQDN needs to be
@@ -253,7 +255,7 @@ export MCP_HOSTNAME=mcp-nutanix-${INGRESS_IP//./-}.sslip.nutanixdemo.com
 ```
 
 ### Apply the ingress config
-```
+```yaml
 kubectl apply -f -<<EOF
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -282,14 +284,14 @@ spec:
 EOF
 ```
 ### Check the health of the MCPServer resource
-```
+```bash
 curl https://$MCP_HOSTNAME/health
 ```
 
 ### Optional - Execute mcp-remote and mcp-inspect npm modules for testing
 
 In one terminal, run the following to start the server
-```
+```console
 $ npx -y mcp-remote https://$MCP_HOSTNAME/mcp
 [3395582] Using automatically selected callback port: 14045
 [3395582] Discovering OAuth server configuration...
@@ -303,7 +305,7 @@ $ npx -y mcp-remote https://$MCP_HOSTNAME/mcp
 
 In another terminal, create a config.json file that looks like this
 
-```
+```json
 {
   "mcpServers": {
     "remote": {
@@ -320,7 +322,7 @@ In another terminal, create a config.json file that looks like this
 
 Then start the mcp-inspect tool
 
-```
+```console
 $ npx -y mcp-inspect config.json
 ```
 
@@ -334,7 +336,7 @@ Use the tab + arrow keys to navigate.
 
 Or you can run a [script](https://raw.githubusercontent.com/lauramariel/nai/refs/heads/main/mcp/mcp_client.py) to list all the tools from the MCP server.
 
-```
+```bash
 # Download script
 wget https://raw.githubusercontent.com/lauramariel/nai/refs/heads/main/mcp/mcp_client.py
 

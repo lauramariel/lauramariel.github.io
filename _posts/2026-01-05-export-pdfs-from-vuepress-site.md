@@ -10,13 +10,13 @@ tags: [vuepress, javascript]
 ### Install required module and related binaries
 
 In project folder, install playwright
-```
+```bash
 npm install -D playwright
 npx playwright install chromium
 ```
 
 ### Create .mjs script to export PDFs
-```
+```javascript
 import { chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
@@ -91,13 +91,13 @@ import path from 'path';
 ```
 
 ### Start local VuePress server
-```
+```bash
 npm run dev 
 ```
 
 ### Run the script
 Playwright will launch the site in headless mode via Chromium, render each page, and save the files to the outputDir defined in the script.
-```
+```bash
 node export.mjs
 ```
 
@@ -107,7 +107,7 @@ I installed GhostScript and tried various options but the images kept rendering 
 
 ChatGPT recommended `pdfunite` by Poppler and that worked perfectly :)
 
-```
+```bash
 brew install poppler
 pdfunite *.pdf combined.pdf
 ```

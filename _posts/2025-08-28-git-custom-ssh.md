@@ -11,7 +11,7 @@ If using unique deploy keys on GitHub for each repo.
 1. Make sure the private key file defined exists and that the corresponding public key is defined in the repo's deploy keys. If not, add them.
 
     ~/.ssh/config format:
-    ```
+    ```ssh
     Host <ssh-alias>
         HostName github.com
         IdentityFile ~/.ssh/<private-key-file>
@@ -19,16 +19,16 @@ If using unique deploy keys on GitHub for each repo.
         IdentitiesOnly yes
     ```
 2. Clone the repo
-    ```
+    ```bash
     git clone git@github.com:<repo-name>
     ```
 3. Update remote URL to match what's in SSH config
-    ```
+    ```bash
     git remote set-url origin git@<ssh-alias>:<repo-name>
     ```
 
 4. Pull and test
-    ```
+    ```bash
     git branch --set-upstream-to=origin/main main
     git pull
     ```
@@ -36,15 +36,15 @@ If using unique deploy keys on GitHub for each repo.
 ## Other useful commands
 
 * Setting user for the repo
-    ```
+    ```bash
     git config user.email "EMAIL"
     git config user.name "USER"
     ```
 * Testing git auth
-   ```
+   ```bash
    ssh -T git@<ssh-alias>
    ```
 * Another way to test
-  ```
+  ```bash
   git push --dry-run origin
   ```

@@ -11,7 +11,7 @@ Cheat sheet for importing a custom model into Nutanix Enterprise AI.
 On your workstation, mount your file share. Ensure that Nutanix Enterprise AI also has connectivity to this share.
 
 
-```
+```bash
 mkdir /mnt/custom-models
 mount files.ntnxlab.local:/custom-models /mnt/custom-models
 ```
@@ -20,7 +20,7 @@ mount files.ntnxlab.local:/custom-models /mnt/custom-models
 
 [HuggingFace documentation](https://huggingface.co/docs/huggingface_hub/main/en/guides/cli)
 
-```
+```bash
 pip install -U "huggingface_hub[cli]"
 ```
 
@@ -32,14 +32,14 @@ Find the model you want on HuggingFace. Make sure you have been granted access t
 
 ### Step 4. Download the model
 
-```
+```bash
 huggingface-cli download --local-dir /mnt/custom-models/llama-3.2-11b-vision meta-llama/Llama-3.2-11B-Vision-Instruct
 ```
 
 ### Step 5. See what the model size is
 
 We'll need to specify the model size when importing into Nutanix Enterprise AI
-```
+```console
 [nutanix@localhost llama-3.2-11b-vision]$ du . -sh
 40G	.
 ```
