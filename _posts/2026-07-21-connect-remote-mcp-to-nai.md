@@ -261,7 +261,7 @@ Now we can test the MCP connector from any MCP client with our MCP Client Key, o
 
 ## Test the MCP Connector from an MCP Client
 
-Instead of connecting directly to the MCP server, many organizations want to control access to MCP servers and available tools, which is exactly what Nutanix Enterprise AI enables.
+Instead of connecting directly to the MCP server, many organizations want to control access to MCP servers and available tools, which is exactly what Nutanix Enterprise AI enables. In this section, we'll connect a lightweight MCP client to both the MCP server directly and then through NAI, to understand the behavior and how tool filtering comes into play.
 
 ### Configure MCP Connector
 
