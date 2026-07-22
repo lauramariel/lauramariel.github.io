@@ -330,7 +330,7 @@ export MCP_CONNECTOR="<YOUR_NAI_MCP_URL>" # e.g. nai.example.com/enterpriseai/ga
 export MCP_AUTH="<YOUR_NAI_MCP_CLIENT_KEY>"
 
 # replace values in mcp_client.py
-sed -i "s#$MCP_HOSTNAME/mcp#$MCP_CONNECTOR#g" mcp_client.py # use # as the delimiter to avoid conflicts with the slashes in $MCP_CONNECTOR
+sed -i "s#$FQDN_MCP_SERVER/mcp#$MCP_CONNECTOR#g" mcp_client.py # use # as the delimiter to avoid conflicts with the slashes in $MCP_CONNECTOR
 sed -i "s/YOUR_API_KEY_OR_TOKEN/$MCP_AUTH/g" mcp_client.py
 ```
 
