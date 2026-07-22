@@ -38,8 +38,8 @@ async def run_streamable_mcp_client(
 
             for tool in tools_response.tools:
                 print(f"• Tool: {tool.name}")
-                print(f"  Description: {tool.description}")
-                print(f"  Schema: {tool.inputSchema}\n")
+                #print(f"  Description: {tool.description}")
+                #print(f"  Schema: {tool.inputSchema}\n")
 
             total_count = len(tools_response.tools)
             print(f"\n Total Tools Found: {total_count}\n")
