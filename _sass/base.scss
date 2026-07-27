@@ -128,3 +128,19 @@ th {
   margin-left: 0.3em;
   font-size: 0.75rem;
 }
+
+.contact-links {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.contact-links a {
+  display: inline-flex;
+  color: var(--color-muted);
+}
+
+.contact-links a:hover,
+.contact-links a:focus-visible {
+  color: var(--color-accent);
+  text-decoration: none;
+}
