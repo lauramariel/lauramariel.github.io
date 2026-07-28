@@ -42,7 +42,7 @@ All old Speaking/Videos/Blogs & Code Samples markup is removed from `about.html`
 
 ## Known side effect (not addressed by this spec)
 
-`_layouts/page.html` wraps all page content — including `about.html` and the new `speaking.html` — in the same `.post-content` div used by blog posts. The still-unexecuted heading-anchors feature (`docs/superpowers/plans/2026-07-21-post-content-enhancements.md`) scopes its anchor links to `.post-content h2, h3`, meaning once that plan is executed, the new `<h2>` headings on `about.html` (and `speaking.html`) will also get hover-reveal anchor links. This is a pre-existing structural fact about `page.html`, not something this change introduces. Left as-is for now; worth revisiting when the heading-anchors plan is executed, since that plan's verification steps assume `about.html` has no headings in `.post-content` (no longer true after this change).
+`_layouts/page.html` wraps all page content — including `about.html` and the new `speaking.html` — in the same `.post-content` div used by blog posts. The heading-anchors feature (`docs/superpowers/plans/2026-07-21-post-content-enhancements.md`) scopes its anchor links to `.post-content h2, h3`, so that selector does match the new `<h2>` headings on `about.html` and `speaking.html`. However, kramdown only auto-generates heading `id` attributes for Markdown content — `about.html` and `speaking.html` are raw `.html` pages, so their headings render with no `id`. The anchors JS guards with `if (!heading.id) return;`, so it silently skips these headings. Net effect: no anchors appear on `about.html`/`speaking.html`. This is a pre-existing structural fact about `page.html`, not something this change introduces, and there is nothing further to address here.
 
 ## Verification
 
