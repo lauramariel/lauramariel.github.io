@@ -6,6 +6,8 @@ tags: [nutanix, genai]
 ---
 Cheat sheet for importing a custom model into Nutanix Enterprise AI. 
 
+**Note:** As of NAI 2.3, you can now import any Hugging Face model directly using the Import from Model URL feature. You can still use this method to import non-Hugging Face models.
+
 ### Step 1. Mount file share
 
 On your workstation, mount your file share. Ensure that Nutanix Enterprise AI also has connectivity to this share.
