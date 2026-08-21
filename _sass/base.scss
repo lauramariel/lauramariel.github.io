@@ -18,6 +18,13 @@ h1, h2, h3, h4 {
   margin: 1.6em 0 0.5em;
 }
 
+h2::before {
+    content: "> ";
+    color: var(--color-accent);
+    font-family: monospace;
+}
+
+
 h1 { font-size: 1.9rem; }
 h2 { font-size: 1.4rem; }
 h3 { font-size: 1.15rem; }
