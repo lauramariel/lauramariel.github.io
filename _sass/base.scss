@@ -59,14 +59,17 @@ code {
 
 pre {
   background: var(--color-code-bg);
-  padding: 1em;
+  padding: 0.5em 0.75em;
+  margin: 0.5em 0;
   border-radius: 6px;
   overflow-x: auto;
+  line-height: 1.4;
 }
 
 pre code {
   background: none;
   padding: 0;
+  line-height: 1.4;
 }
 
 img {
