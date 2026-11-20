@@ -2,7 +2,7 @@
 layout: post
 title:  "Running and Connecting a Remote MCP server to NAI"
 date: 2026-07-21 15:03:39 -0700
-tags: [ai, mcp, genai]
+tags: [ai, mcp, genai, nutanix]
 ---
 
 These are my notes on running and connecting a remote MCP Server to Nutanix Enterprise AI. We're just going to use a simple MCP server that provides weather information in order to test the functionality. Apologies in advance for the small images. I'll fix them some day.

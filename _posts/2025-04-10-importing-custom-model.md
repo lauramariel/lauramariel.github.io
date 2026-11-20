@@ -2,7 +2,7 @@
 layout: post
 title:  "Importing a Custom Model in Nutanix Enterprise AI"
 date:   2025-04-10 17:32:06 -0700
-tags: [nutanix, genai]
+tags: [ai, genai, nutanix]
 ---
 Cheat sheet for importing a custom model into Nutanix Enterprise AI. 
 
