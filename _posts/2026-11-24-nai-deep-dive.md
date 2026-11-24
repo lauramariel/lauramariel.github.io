@@ -2,7 +2,7 @@
 layout: post
 title:  "Under the Hood of Nutanix Enterprise AI 2.8"
 date: 2026-11-24 14:38:29 -0800
-tags: [kubernetes, genai]
+tags: [kubernetes, genai, ai]
 ---
 
 # Nutanix Enterprise AI Deep Dive: What Happens on Kubernetes When You Click "Create"
