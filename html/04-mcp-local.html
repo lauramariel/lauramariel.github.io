@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAI: MCP Server (Local) Creation Flow</title>
+<style>
+  :root { --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a; --text: #e2e8f0; --muted: #94a3b8; --accent: #6366f1; --green: #22c55e; --orange: #f59e0b; --cyan: #06b6d4; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 2rem; }
+  h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--muted); margin-bottom: 2rem; }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; overflow-x: auto; }
+  svg { width: 100%; height: auto; }
+  .section { margin-bottom: 2rem; }
+  .section h2 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent); }
+  .section p { color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+  .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+  .info-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+  .info-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+  .info-card code { background: #2a2d3a; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.8rem; }
+  .resource-list { list-style: none; padding: 0; }
+  .resource-list li { padding: 0.4rem 0; font-size: 0.85rem; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .resource-list li:last-child { border-bottom: none; }
+  .resource-list code { color: var(--green); }
+</style>
+</head>
+<body>
+<h1>MCP Server (Local) Creation Flow</h1>
+<p class="subtitle">What gets created on Kubernetes when you create a "Local MCP Server" in NAI (e.g., "demo-crm" running a container image)</p>
+
+<div class="diagram">
+<svg viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1000" height="420" fill="#1a1d27" rx="8"/>
+  <text x="500" y="30" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">Local MCP Server "demo-crm" → Kubernetes Resources</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Flow -->
+  <rect x="40" y="60" width="180" height="60" rx="8" fill="#2a2d3a" stroke="#6366f1" stroke-width="2"/>
+  <text x="130" y="85" text-anchor="middle" fill="#6366f1" font-size="12" font-weight="bold">1. NAI UI</text>
+  <text x="130" y="105" text-anchor="middle" fill="#94a3b8" font-size="10">Create MCP Server</text>
+  <text x="130" y="118" text-anchor="middle" fill="#94a3b8" font-size="9">type: local, image: demo-mcp-server</text>
+
+  <line x1="220" y1="90" x2="270" y2="90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="270" y="50" width="200" height="80" rx="8" fill="#2a2d3a" stroke="#22c55e" stroke-width="2"/>
+  <text x="370" y="72" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">2. Deployment Created</text>
+  <text x="370" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">nai-admin-extensions ns</text>
+  <text x="370" y="102" text-anchor="middle" fill="#94a3b8" font-size="9">image: demo-mcp-server:latest</text>
+  <text x="370" y="116" text-anchor="middle" fill="#94a3b8" font-size="9">port: 3000, 1 replica</text>
+
+  <line x1="470" y1="90" x2="520" y2="90" stroke="#22c55e" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="520" y="50" width="200" height="80" rx="8" fill="#2a2d3a" stroke="#f59e0b" stroke-width="2"/>
+  <text x="620" y="72" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">3. Service Created</text>
+  <text x="620" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">ClusterIP: mcp-...:3000</text>
+  <text x="620" y="102" text-anchor="middle" fill="#94a3b8" font-size="9">nai-admin-extensions ns</text>
+
+  <line x1="720" y1="90" x2="770" y2="90" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="770" y="50" width="200" height="80" rx="8" fill="#2a2d3a" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="870" y="72" text-anchor="middle" fill="#8b5cf6" font-size="11" font-weight="bold">4. Envoy Resources</text>
+  <text x="870" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">Backend (FQDN → svc)</text>
+  <text x="870" y="102" text-anchor="middle" fill="#94a3b8" font-size="9">MCPRoute (path + tools)</text>
+
+  <!-- Detail boxes -->
+  <rect x="40" y="160" width="460" height="240" rx="8" fill="#2a2d3a" stroke="#2a2d3a" stroke-width="1"/>
+  <text x="60" y="185" fill="#e2e8f0" font-size="13" font-weight="bold">Deployment Spec (demo-crm)</text>
+  <text x="60" y="205" fill="#94a3b8" font-size="10" font-family="monospace">image: demo-mcp-server:latest</text>
+  <text x="60" y="220" fill="#94a3b8" font-size="10" font-family="monospace">containerPort: 3000</text>
+  <text x="60" y="235" fill="#94a3b8" font-size="10" font-family="monospace">readinessProbe: tcpSocket 3000</text>
+  <text x="60" y="250" fill="#94a3b8" font-size="10" font-family="monospace">resources: 1 CPU, 1Gi RAM</text>
+  <text x="60" y="265" fill="#94a3b8" font-size="10" font-family="monospace">replicas: 1</text>
+
+  <text x="60" y="295" fill="#e2e8f0" font-size="13" font-weight="bold">Backend Spec (Envoy)</text>
+  <text x="60" y="315" fill="#94a3b8" font-size="10" font-family="monospace">type: Endpoints</text>
+  <text x="60" y="330" fill="#94a3b8" font-size="10" font-family="monospace">fqdn: mcp-nai-...svc.cluster.local:3000</text>
+  <text x="60" y="345" fill="#94a3b8" font-size="10" font-family="monospace">Labels: mcp-server-type: local</text>
+
+  <text x="60" y="375" fill="#e2e8f0" font-size="13" font-weight="bold">MCPRoute Spec</text>
+  <text x="60" y="395" fill="#94a3b8" font-size="10" font-family="monospace">path: /enterpriseai/gateway/mcp/demo-crm</text>
+
+  <rect x="520" y="160" width="460" height="240" rx="8" fill="#2a2d3a" stroke="#2a2d3a" stroke-width="1"/>
+  <text x="540" y="185" fill="#e2e8f0" font-size="13" font-weight="bold">Created Resources</text>
+
+  <text x="540" y="210" fill="#f59e0b" font-size="11" font-weight="bold">1. Deployment (nai-admin-extensions)</text>
+  <text x="560" y="228" fill="#94a3b8" font-size="10">Runs the MCP server container</text>
+  <text x="560" y="243" fill="#94a3b8" font-size="10">Image from container registry</text>
+
+  <text x="540" y="270" fill="#f59e0b" font-size="11" font-weight="bold">2. Service (nai-admin-extensions)</text>
+  <text x="560" y="288" fill="#94a3b8" font-size="10">ClusterIP on port 3000</text>
+  <text x="560" y="303" fill="#94a3b8" font-size="10">Selector: mcp-server-name=demo-crm</text>
+
+  <text x="540" y="330" fill="#f59e0b" font-size="11" font-weight="bold">3. Envoy Backend (nai-admin-extensions)</text>
+  <text x="560" y="348" fill="#94a3b8" font-size="10">gateway.envoyproxy.io/v1alpha1</text>
+  <text x="560" y="363" fill="#94a3b8" font-size="10">FQDN → ClusterIP service</text>
+
+  <text x="540" y="390" fill="#f59e0b" font-size="11" font-weight="bold">4. MCPRoute (nai-admin-extensions)</text>
+  <text x="560" y="408" fill="#94a3b8" font-size="10">aigateway.envoyproxy.io/v1beta1</text>
+  <text x="560" y="423" fill="#94a3b8" font-size="10">parentRefs: Gateway nai-ingress-gateway</text>
+</svg>
+</div>
+
+<div class="section">
+  <h2>Key Takeaways</h2>
+  <ul class="resource-list">
+    <li>A <strong>Local MCP Server</strong> deploys a container (from a registry image) as a Kubernetes <strong>Deployment</strong> + <strong>Service</strong></li>
+    <li>An Envoy <strong>Backend</strong> is created pointing to the service's FQDN (ClusterIP:port)</li>
+    <li>An <strong>MCPRoute</strong> exposes the MCP server at <code>/enterpriseai/gateway/mcp/&lt;name&gt;</code> on the Gateway</li>
+    <li>The MCPRoute references the Gateway (nai-ingress-gateway) as parentRef</li>
+    <li>NAI labels resources with <code>nai.nutanix.com/feature: mcp</code> and <code>nai.nutanix.com/mcp-server-type: local</code></li>
+    <li>The container image, port, and resource limits are configurable in the NAI UI</li>
+  </ul>
+</div>
+</body>
+</html>

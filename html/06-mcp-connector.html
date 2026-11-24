@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAI: MCP Connector Creation Flow</title>
+<style>
+  :root { --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a; --text: #e2e8f0; --muted: #94a3b8; --accent: #6366f1; --green: #22c55e; --orange: #f59e0b; --cyan: #06b6d4; --purple: #8b5cf6; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 2rem; }
+  h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--muted); margin-bottom: 2rem; }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; overflow-x: auto; }
+  svg { width: 100%; height: auto; }
+  .section { margin-bottom: 2rem; }
+  .section h2 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent); }
+  .section p { color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+  .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+  .info-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+  .info-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+  .info-card code { background: #2a2d3a; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.8rem; }
+  .resource-list { list-style: none; padding: 0; }
+  .resource-list li { padding: 0.4rem 0; font-size: 0.85rem; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .resource-list li:last-child { border-bottom: none; }
+  .resource-list code { color: var(--green); }
+</style>
+</head>
+<body>
+<h1>MCP Connector Creation Flow</h1>
+<p class="subtitle">What gets created on Kubernetes when you create an "MCP Connector" in NAI (e.g., "weather-forecast" that exposes only the forecast tool from the weather MCP server)</p>
+
+<div class="diagram">
+<svg viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1000" height="420" fill="#1a1d27" rx="8"/>
+  <text x="500" y="30" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">MCP Connector "weather-forecast" → Kubernetes Resources</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect x="40" y="60" width="180" height="60" rx="8" fill="#2a2d3a" stroke="#6366f1" stroke-width="2"/>
+  <text x="130" y="85" text-anchor="middle" fill="#6366f1" font-size="12" font-weight="bold">1. NAI UI</text>
+  <text x="130" y="105" text-anchor="middle" fill="#94a3b8" font-size="10">Create Connector</text>
+  <text x="130" y="118" text-anchor="middle" fill="#94a3b8" font-size="9">source: weather, tool: forecast</text>
+
+  <line x1="220" y1="90" x2="270" y2="90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="270" y="50" width="220" height="80" rx="8" fill="#2a2d3a" stroke="#f59e0b" stroke-width="2"/>
+  <text x="380" y="72" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">2. MCPRoute (filtered)</text>
+  <text x="380" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">aigateway.envoyproxy.io/v1beta1</text>
+  <text x="380" y="102" text-anchor="middle" fill="#94a3b8" font-size="9">toolSelector.include: [nws_get_forecast]</text>
+  <text x="380" y="116" text-anchor="middle" fill="#94a3b8" font-size="9">path: /mcp/weather-forecast</text>
+
+  <line x1="490" y1="90" x2="540" y2="90" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="540" y="50" width="200" height="80" rx="8" fill="#2a2d3a" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="640" y="72" text-anchor="middle" fill="#8b5cf6" font-size="11" font-weight="bold">3. MCP Proxy Backend</text>
+  <text x="640" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">gateway.envoyproxy.io/v1alpha1</text>
+  <text x="640" y="102" text-anchor="middle" fill="#94a3b8" font-size="9">ip: 192.0.2.42:9856</text>
+  <text x="640" y="116" text-anchor="middle" fill="#94a3b8" font-size="9">(extproc sidecar)</text>
+
+  <line x1="740" y1="90" x2="790" y2="90" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="790" y="50" width="180" height="80" rx="8" fill="#2a2d3a" stroke="#22c55e" stroke-width="2"/>
+  <text x="880" y="72" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">4. Tool Filtered</text>
+  <text x="880" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">Only forecast tool</text>
+  <text x="880" y="102" text-anchor="middle" fill="#94a3b8" font-size="9">exposed via connector</text>
+  <text x="880" y="116" text-anchor="middle" fill="#94a3b8" font-size="9">path: /mcp/weather-forecast</text>
+
+  <!-- Detail boxes -->
+  <rect x="40" y="160" width="460" height="240" rx="8" fill="#2a2d3a" stroke="#2a2d3a" stroke-width="1"/>
+  <text x="60" y="185" fill="#e2e8f0" font-size="13" font-weight="bold">MCPRoute Spec (mcp-weather-forecast)</text>
+  <text x="60" y="205" fill="#94a3b8" font-size="10" font-family="monospace">backendRefs:</text>
+  <text x="70" y="220" fill="#94a3b8" font-size="10" font-family="monospace">  - name: mcp-weather (Backend)</text>
+  <text x="70" y="235" fill="#94a3b8" font-size="10" font-family="monospace">    path: /mcp</text>
+  <text x="70" y="250" fill="#94a3b8" font-size="10" font-family="monospace">    toolSelector.include:</text>
+  <text x="80" y="265" fill="#94a3b8" font-size="10" font-family="monospace">      - nws_get_forecast</text>
+  <text x="60" y="285" fill="#94a3b8" font-size="10" font-family="monospace">path: /enterpriseai/gateway/mcp/weather-forecast</text>
+  <text x="60" y="300" fill="#94a3b8" font-size="10" font-family="monospace">parentRefs: Gateway nai-ingress-gateway</text>
+
+  <text x="60" y="330" fill="#e2e8f0" font-size="13" font-weight="bold">MCP Proxy Backend</text>
+  <text x="60" y="350" fill="#94a3b8" font-size="10" font-family="monospace">type: Endpoints</text>
+  <text x="60" y="365" fill="#94a3b8" font-size="10" font-family="monospace">ip: 192.0.2.42, port: 9856</text>
+  <text x="60" y="380" fill="#94a3b8" font-size="10" font-family="monospace">ownerRef: MCPRoute (controller)</text>
+  <text x="60" y="395" fill="#94a3b8" font-size="10" font-family="monospace">This is the extproc sidecar proxy</text>
+
+  <rect x="520" y="160" width="460" height="240" rx="8" fill="#2a2d3a" stroke="#2a2d3a" stroke-width="1"/>
+  <text x="540" y="185" fill="#e2e8f0" font-size="13" font-weight="bold">Created Resources</text>
+
+  <text x="540" y="210" fill="#f59e0b" font-size="11" font-weight="bold">1. MCPRoute (nai-admin-extensions)</text>
+  <text x="560" y="228" fill="#94a3b8" font-size="10">aigateway.envoyproxy.io/v1beta1</text>
+  <text x="560" y="243" fill="#94a3b8" font-size="10">Filters to specific tools (nws_get_forecast)</text>
+  <text x="560" y="258" fill="#94a3b8" font-size="10">Owned by the connector definition</text>
+
+  <text x="540" y="285" fill="#f59e0b" font-size="11" font-weight="bold">2. MCP Proxy Backend (auto-created)</text>
+  <text x="560" y="303" fill="#94a3b8" font-size="10">gateway.envoyproxy.io/v1alpha1</text>
+  <text x="560" y="318" fill="#94a3b8" font-size="10">Points to extproc sidecar (192.0.2.42:9856)</text>
+  <text x="560" y="333" fill="#94a3b8" font-size="10">ownerRef: MCPRoute (controller-managed)</text>
+
+  <text x="540" y="360" fill="#f59e0b" font-size="11" font-weight="bold">3. No New Pod/Deployment</text>
+  <text x="560" y="378" fill="#94a3b8" font-size="10">Connector reuses the existing MCP server backend</text>
+  <text x="560" y="393" fill="#94a3b8" font-size="10">Tool filtering happens in the MCP proxy (extproc)</text>
+
+  <text x="540" y="420" fill="#f59e0b" font-size="11" font-weight="bold">4. Endpoint URL</text>
+  <text x="560" y="438" fill="#94a3b8" font-size="10">/enterpriseai/gateway/mcp/weather-forecast</text>
+</svg>
+</div>
+
+<div class="section">
+  <h2>Key Takeaways</h2>
+  <ul class="resource-list">
+    <li>An <strong>MCP Connector</strong> creates a new <code>MCPRoute</code> that filters tools from an existing MCP server</li>
+    <li>The <code>toolSelector.include</code> field specifies which tools are exposed (e.g., only <code>nws_get_forecast</code>)</li>
+    <li>A <strong>MCP Proxy Backend</strong> is auto-created, pointing to the extproc sidecar (192.0.2.42:9856)</li>
+    <li>The extproc sidecar handles tool filtering and MCP protocol translation</li>
+    <li>No new pods are created — the connector reuses the existing MCP server backend</li>
+    <li>The connector gets its own path: <code>/enterpriseai/gateway/mcp/&lt;connector-name&gt;</code></li>
+    <li>Multiple connectors can filter different tool subsets from the same MCP server</li>
+  </ul>
+</div>
+</body>
+</html>

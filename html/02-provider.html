@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAI: Provider Creation Flow</title>
+<style>
+  :root { --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a; --text: #e2e8f0; --muted: #94a3b8; --accent: #6366f1; --green: #22c55e; --orange: #f59e0b; --cyan: #06b6d4; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 2rem; }
+  h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--muted); margin-bottom: 2rem; }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; overflow-x: auto; }
+  svg { width: 100%; height: auto; }
+  .section { margin-bottom: 2rem; }
+  .section h2 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent); }
+  .section p { color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+  .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+  .info-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+  .info-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+  .info-card code { background: #2a2d3a; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.8rem; }
+  .resource-list { list-style: none; padding: 0; }
+  .resource-list li { padding: 0.4rem 0; font-size: 0.85rem; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .resource-list li:last-child { border-bottom: none; }
+  .resource-list code { color: var(--green); }
+</style>
+</head>
+<body>
+<h1>Provider Creation Flow</h1>
+<p class="subtitle">What gets created on Kubernetes when you create a "Provider" in NAI (e.g., "shared-nai" pointing to nai.example.com)</p>
+
+<div class="diagram">
+<svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1000" height="500" fill="#1a1d27" rx="8"/>
+  <text x="500" y="30" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">Provider "shared-nai" → Kubernetes Resources</text>
+
+  <!-- Step 1: UI Action -->
+  <rect x="40" y="60" width="200" height="60" rx="8" fill="#2a2d3a" stroke="#6366f1" stroke-width="2"/>
+  <text x="140" y="85" text-anchor="middle" fill="#6366f1" font-size="12" font-weight="bold">1. NAI UI</text>
+  <text x="140" y="105" text-anchor="middle" fill="#94a3b8" font-size="10">Create Provider</text>
+  <text x="140" y="118" text-anchor="middle" fill="#94a3b8" font-size="9">name: shared-nai</text>
+
+  <line x1="240" y1="90" x2="290" y2="90" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 2: Secret -->
+  <rect x="290" y="60" width="180" height="60" rx="8" fill="#2a2d3a" stroke="#22c55e" stroke-width="2"/>
+  <text x="380" y="82" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">2. Secret Created</text>
+  <text x="380" y="98" text-anchor="middle" fill="#94a3b8" font-size="9">nai-ac1d541f-... (Opaque)</text>
+  <text x="380" y="112" text-anchor="middle" fill="#94a3b8" font-size="9">API key for provider</text>
+
+  <line x1="470" y1="90" x2="520" y2="90" stroke="#22c55e" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 3: AIGatewayProvider CR -->
+  <rect x="520" y="50" width="220" height="80" rx="8" fill="#2a2d3a" stroke="#f59e0b" stroke-width="2"/>
+  <text x="630" y="72" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">3. AIGatewayProvider CR</text>
+  <text x="630" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">iep.nai.nutanix.com/v1alpha1</text>
+  <text x="630" y="102" text-anchor="middle" fill="#94a3b8" font-size="9">namespace: nai-admin</text>
+  <text x="630" y="116" text-anchor="middle" fill="#94a3b8" font-size="9">hostname: nai.example.com:443</text>
+
+  <line x1="740" y1="90" x2="790" y2="90" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 4: Reconciled Resources -->
+  <rect x="790" y="40" width="180" height="100" rx="8" fill="#2a2d3a" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="880" y="60" text-anchor="middle" fill="#8b5cf6" font-size="11" font-weight="bold">4. Reconciled</text>
+  <text x="880" y="78" text-anchor="middle" fill="#94a3b8" font-size="9">Backend (Envoy)</text>
+  <text x="880" y="92" text-anchor="middle" fill="#94a3b8" font-size="9">AIServiceBackend (OpenAI)</text>
+  <text x="880" y="106" text-anchor="middle" fill="#94a3b8" font-size="9">AIServiceBackend (Cohere)</text>
+  <text x="880" y="120" text-anchor="middle" fill="#94a3b8" font-size="9">BackendTLSPolicy</text>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Detail boxes -->
+  <rect x="40" y="180" width="460" height="280" rx="8" fill="#2a2d3a" stroke="#2a2d3a" stroke-width="1"/>
+  <text x="60" y="205" fill="#e2e8f0" font-size="13" font-weight="bold">AIGatewayProvider Spec</text>
+  <text x="60" y="225" fill="#94a3b8" font-size="10" font-family="monospace">backend:</text>
+  <text x="70" y="240" fill="#94a3b8" font-size="10" font-family="monospace">  hostname: nai.example.com</text>
+  <text x="70" y="255" fill="#94a3b8" font-size="10" font-family="monospace">  port: 443</text>
+  <text x="70" y="270" fill="#94a3b8" font-size="10" font-family="monospace">  schemaVersion:</text>
+  <text x="80" y="285" fill="#94a3b8" font-size="10" font-family="monospace">    OpenAI:</text>
+  <text x="90" y="300" fill="#94a3b8" font-size="10" font-family="monospace">      prefix: enterpriseai/v1</text>
+  <text x="90" y="315" fill="#94a3b8" font-size="10" font-family="monospace">      credentials: APIKey (from Secret)</text>
+  <text x="80" y="330" fill="#94a3b8" font-size="10" font-family="monospace">    Cohere:</text>
+  <text x="90" y="345" fill="#94a3b8" font-size="10" font-family="monospace">      version: enterpriseai/v2</text>
+  <text x="90" y="360" fill="#94a3b8" font-size="10" font-family="monospace">      credentials: APIKey (from Secret)</text>
+
+  <text x="60" y="390" fill="#e2e8f0" font-size="13" font-weight="bold">Status Conditions</text>
+  <text x="60" y="410" fill="#22c55e" font-size="10">✓ AIGatewayProviderAccepted</text>
+  <text x="60" y="425" fill="#22c55e" font-size="10">✓ BackendAccepted (Envoy Backend created)</text>
+  <text x="60" y="440" fill="#22c55e" font-size="10">✓ AIServiceBackendAccepted (OpenAI + Cohere)</text>
+  <text x="60" y="455" fill="#22c55e" font-size="10">✓ BackendTLSPolicyAccepted</text>
+
+  <rect x="520" y="180" width="460" height="280" rx="8" fill="#2a2d3a" stroke="#2a2d3a" stroke-width="1"/>
+  <text x="540" y="205" fill="#e2e8f0" font-size="13" font-weight="bold">Created Kubernetes Resources</text>
+
+  <text x="540" y="230" fill="#f59e0b" font-size="11" font-weight="bold">1. Secret (nai-admin)</text>
+  <text x="560" y="248" fill="#94a3b8" font-size="10">nai-ac1d541f-... (Opaque, 1 data key)</text>
+  <text x="560" y="263" fill="#94a3b8" font-size="10">Stores the provider API key</text>
+
+  <text x="540" y="290" fill="#f59e0b" font-size="11" font-weight="bold">2. AIGatewayProvider CR (nai-admin)</text>
+  <text x="560" y="308" fill="#94a3b8" font-size="10">iep.nai.nutanix.com/v1alpha1</text>
+  <text x="560" y="323" fill="#94a3b8" font-size="10">Managed by NAI IEP operator</text>
+
+  <text x="540" y="350" fill="#f59e0b" font-size="11" font-weight="bold">3. Envoy Backend (nai-admin)</text>
+  <text x="560" y="368" fill="#94a3b8" font-size="10">gateway.envoyproxy.io/v1alpha1</text>
+  <text x="560" y="383" fill="#94a3b8" font-size="10">FQDN: nai.example.com:443</text>
+
+  <text x="540" y="410" fill="#f59e0b" font-size="11" font-weight="bold">4. AIServiceBackends (nai-admin)</text>
+  <text x="560" y="428" fill="#94a3b8" font-size="10">gateway.envoyproxy.io/v1alpha1</text>
+  <text x="560" y="443" fill="#94a3b8" font-size="10">uep-nai-...-openai, uep-nai-...-cohere</text>
+</svg>
+</div>
+
+<div class="section">
+  <h2>Key Takeaways</h2>
+  <ul class="resource-list">
+    <li>A <strong>Provider</strong> in NAI creates an <code>AIGatewayProvider</code> CR, a <strong>Secret</strong> (API key), and triggers creation of Envoy <strong>Backend</strong> + <strong>AIServiceBackend</strong> resources</li>
+    <li>The <strong>NAI IEP operator</strong> reconciles the AIGatewayProvider and creates the child Envoy resources</li>
+    <li>The Backend points to the external LLM provider hostname (e.g., nai.example.com)</li>
+    <li>AIServiceBackends define the API format (OpenAI-compatible, Cohere) and credentials</li>
+    <li>The provider hostname and API key are the only user inputs — everything else is auto-generated</li>
+  </ul>
+</div>
+</body>
+</html>

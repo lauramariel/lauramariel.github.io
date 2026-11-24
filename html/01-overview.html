@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAI Backend Architecture Overview</title>
+<style>
+  :root { --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a; --text: #e2e8f0; --muted: #94a3b8; --accent: #6366f1; --green: #22c55e; --orange: #f59e0b; --red: #ef4444; --cyan: #06b6d4; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); padding: 2rem; }
+  h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .subtitle { color: var(--muted); margin-bottom: 2rem; }
+  .diagram { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; overflow-x: auto; }
+  svg { width: 100%; height: auto; }
+  .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; font-size: 0.85rem; color: var(--muted); }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .section { margin-bottom: 2rem; }
+  .section h2 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent); }
+  .section p { color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+  .info-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+  .info-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+  .info-card code { background: #2a2d3a; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<h1>NAI Backend Architecture Overview</h1>
+<p class="subtitle">What gets created on Kubernetes when you use Nutanix Enterprise AI (NAI) features</p>
+
+<div class="diagram">
+<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="700" fill="#1a1d27" rx="8"/>
+
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="bold">NAI Backend: Kubernetes Resources Created</text>
+
+  <!-- Envoy Gateway Layer -->
+  <rect x="40" y="60" width="1120" height="120" rx="8" fill="#2a2d3a" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="60" y="85" fill="#6366f1" font-size="13" font-weight="bold">Envoy Gateway (Data Plane) — envoy-gateway-system namespace</text>
+
+  <!-- Envoy Proxy Pod -->
+  <rect x="60" y="100" width="200" height="65" rx="6" fill="#1a1d27" stroke="#06b6d4" stroke-width="1"/>
+  <text x="160" y="120" text-anchor="middle" fill="#06b6d4" font-size="11" font-weight="bold">Envoy Proxy Pod</text>
+  <text x="160" y="138" text-anchor="middle" fill="#94a3b8" font-size="9">envoy + shutdown-manager</text>
+  <text x="160" y="152" text-anchor="middle" fill="#94a3b8" font-size="9">+ ai-gateway-extproc</text>
+
+  <!-- Gateway CRD -->
+  <rect x="280" y="100" width="160" height="65" rx="6" fill="#1a1d27" stroke="#f59e0b" stroke-width="1"/>
+  <text x="360" y="120" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">Gateway CRD</text>
+  <text x="360" y="138" text-anchor="middle" fill="#94a3b8" font-size="9">nai-ingress-gateway</text>
+  <text x="360" y="152" text-anchor="middle" fill="#94a3b8" font-size="9">LoadBalancer: 10.8.47.22</text>
+
+  <!-- MCPRoute -->
+  <rect x="460" y="100" width="140" height="65" rx="6" fill="#1a1d27" stroke="#22c55e" stroke-width="1"/>
+  <text x="530" y="120" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">MCPRoute</text>
+  <text x="530" y="138" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-weather-all</text>
+  <text x="530" y="152" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-weather-forecast</text>
+
+  <!-- AIGatewayRoute -->
+  <rect x="620" y="100" width="160" height="65" rx="6" fill="#1a1d27" stroke="#22c55e" stroke-width="1"/>
+  <text x="700" y="120" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">AIGatewayRoute</text>
+  <text x="700" y="138" text-anchor="middle" fill="#94a3b8" font-size="9">uep-uep-chat</text>
+  <text x="700" y="152" text-anchor="middle" fill="#94a3b8" font-size="9">loadbalancer mode</text>
+
+  <!-- AIServiceBackend -->
+  <rect x="800" y="100" width="160" height="65" rx="6" fill="#1a1d27" stroke="#f59e0b" stroke-width="1"/>
+  <text x="880" y="120" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">AIServiceBackend</text>
+  <text x="880" y="138" text-anchor="middle" fill="#94a3b8" font-size="9">openai + cohere</text>
+  <text x="880" y="152" text-anchor="middle" fill="#94a3b8" font-size="9">nai.example.com</text>
+
+  <!-- Backend -->
+  <rect x="980" y="100" width="160" height="65" rx="6" fill="#1a1d27" stroke="#f59e0b" stroke-width="1"/>
+  <text x="1060" y="120" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">Backend</text>
+  <text x="1060" y="138" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-weather (remote)</text>
+  <text x="1060" y="152" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-demo-crm (local)</text>
+
+  <!-- NAI Admin Namespace -->
+  <rect x="40" y="200" width="560" height="220" rx="8" fill="#2a2d3a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="60" y="225" fill="#22c55e" font-size="13" font-weight="bold">nai-admin namespace (NAI Control Plane)</text>
+
+  <rect x="60" y="245" width="160" height="50" rx="6" fill="#1a1d27" stroke="#22c55e" stroke-width="1"/>
+  <text x="140" y="265" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="bold">AIGatewayProvider</text>
+  <text x="140" y="282" text-anchor="middle" fill="#94a3b8" font-size="9">shared-nai</text>
+
+  <rect x="240" y="245" width="160" height="50" rx="6" fill="#1a1d27" stroke="#22c55e" stroke-width="1"/>
+  <text x="320" y="265" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="bold">Model</text>
+  <text x="320" y="282" text-anchor="middle" fill="#94a3b8" font-size="9">llama-32-1b (from HF)</text>
+
+  <rect x="420" y="245" width="160" height="50" rx="6" fill="#1a1d27" stroke="#22c55e" stroke-width="1"/>
+  <text x="500" y="265" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="bold">InferenceService</text>
+  <text x="500" y="282" text-anchor="middle" fill="#94a3b8" font-size="9">llama-32-1b (KServe)</text>
+
+  <rect x="60" y="315" width="160" height="50" rx="6" fill="#1a1d27" stroke="#22c55e" stroke-width="1"/>
+  <text x="140" y="335" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="bold">Secret</text>
+  <text x="140" y="352" text-anchor="middle" fill="#94a3b8" font-size="9">Provider API key</text>
+
+  <rect x="240" y="315" width="160" height="50" rx="6" fill="#1a1d27" stroke="#22c55e" stroke-width="1"/>
+  <text x="320" y="335" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="bold">PVC</text>
+  <text x="320" y="352" text-anchor="middle" fill="#94a3b8" font-size="9">Model files (10G)</text>
+
+  <rect x="420" y="315" width="160" height="50" rx="6" fill="#1a1d27" stroke="#22c55e" stroke-width="1"/>
+  <text x="500" y="335" text-anchor="middle" fill="#22c55e" font-size="10" font-weight="bold">Deployment</text>
+  <text x="500" y="352" text-anchor="middle" fill="#94a3b8" font-size="9">vLLM predictor</text>
+
+  <!-- nai-admin-extensions Namespace -->
+  <rect x="620" y="200" width="540" height="220" rx="8" fill="#2a2d3a" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="640" y="225" fill="#f59e0b" font-size="13" font-weight="bold">nai-admin-extensions namespace (MCP Servers)</text>
+
+  <rect x="640" y="245" width="160" height="50" rx="6" fill="#1a1d27" stroke="#f59e0b" stroke-width="1"/>
+  <text x="720" y="265" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">Deployment</text>
+  <text x="720" y="282" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-demo-crm (local)</text>
+
+  <rect x="820" y="245" width="160" height="50" rx="6" fill="#1a1d27" stroke="#f59e0b" stroke-width="1"/>
+  <text x="900" y="265" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">Service</text>
+  <text x="900" y="282" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-demo-crm:3000</text>
+
+  <rect x="1000" y="245" width="140" height="50" rx="6" fill="#1a1d27" stroke="#f59e0b" stroke-width="1"/>
+  <text x="1070" y="265" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">Backend</text>
+  <text x="1070" y="282" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-demo-crm (local)</text>
+
+  <rect x="640" y="315" width="160" height="50" rx="6" fill="#1a1d27" stroke="#f59e0b" stroke-width="1"/>
+  <text x="720" y="335" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">Backend</text>
+  <text x="720" y="352" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-weather (remote)</text>
+
+  <rect x="820" y="315" width="160" height="50" rx="6" fill="#1a1d27" stroke="#f59e0b" stroke-width="1"/>
+  <text x="900" y="335" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">MCPRoute</text>
+  <text x="900" y="352" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-weather-all</text>
+
+  <rect x="1000" y="315" width="140" height="50" rx="6" fill="#1a1d27" stroke="#f59e0b" stroke-width="1"/>
+  <text x="1070" y="335" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">MCPRoute</text>
+  <text x="1070" y="352" text-anchor="middle" fill="#94a3b8" font-size="9">mcp-weather-forecast</text>
+
+  <!-- KServe / nai-admin -->
+  <rect x="40" y="440" width="560" height="120" rx="8" fill="#2a2d3a" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="60" y="465" fill="#ef4444" font-size="13" font-weight="bold">KServe (Model Serving) — nai-admin namespace</text>
+
+  <rect x="60" y="485" width="160" height="55" rx="6" fill="#1a1d27" stroke="#ef4444" stroke-width="1"/>
+  <text x="140" y="505" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">InferenceService</text>
+  <text x="140" y="522" text-anchor="middle" fill="#94a3b8" font-size="9">llama-32-1b</text>
+  <text x="140" y="535" text-anchor="middle" fill="#94a3b8" font-size="8">vLLM on AMX CPU</text>
+
+  <rect x="240" y="485" width="160" height="55" rx="6" fill="#1a1d27" stroke="#ef4444" stroke-width="1"/>
+  <text x="320" y="505" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">Deployment</text>
+  <text x="320" y="522" text-anchor="middle" fill="#94a3b8" font-size="9">llama-32-1b-predictor</text>
+  <text x="320" y="535" text-anchor="middle" fill="#94a3b8" font-size="8">12 CPU / 12Gi RAM</text>
+
+  <rect x="420" y="485" width="160" height="55" rx="6" fill="#1a1d27" stroke="#ef4444" stroke-width="1"/>
+  <text x="500" y="505" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">Service + HPA</text>
+  <text x="500" y="522" text-anchor="middle" fill="#94a3b8" font-size="9">ClusterIP + autoscale</text>
+  <text x="500" y="535" text-anchor="middle" fill="#94a3b8" font-size="8">min 1, max 1</text>
+
+  <!-- Envoy AI Gateway -->
+  <rect x="620" y="440" width="540" height="120" rx="8" fill="#2a2d3a" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="640" y="465" fill="#8b5cf6" font-size="13" font-weight="bold">Envoy AI Gateway (Routing Layer)</text>
+
+  <rect x="640" y="485" width="160" height="55" rx="6" fill="#1a1d27" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="720" y="505" text-anchor="middle" fill="#8b5cf6" font-size="10" font-weight="bold">AIGatewayRoute</text>
+  <text x="720" y="522" text-anchor="middle" fill="#94a3b8" font-size="9">uep-uep-chat</text>
+  <text x="720" y="535" text-anchor="middle" fill="#94a3b8" font-size="8">loadbalancer mode</text>
+
+  <rect x="820" y="485" width="160" height="55" rx="6" fill="#1a1d27" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="900" y="505" text-anchor="middle" fill="#8b5cf6" font-size="10" font-weight="bold">AIServiceBackend</text>
+  <text x="900" y="522" text-anchor="middle" fill="#94a3b8" font-size="9">openai + cohere</text>
+  <text x="900" y="535" text-anchor="middle" fill="#94a3b8" font-size="8">gemma + gpt-oss</text>
+
+  <rect x="1000" y="485" width="140" height="55" rx="6" fill="#1a1d27" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="1070" y="505" text-anchor="middle" fill="#8b5cf6" font-size="10" font-weight="bold">ExtProc Sidecar</text>
+  <text x="1070" y="522" text-anchor="middle" fill="#94a3b8" font-size="9">ai-gateway-extproc</text>
+  <text x="1070" y="535" text-anchor="middle" fill="#94a3b8" font-size="8">token counting</text>
+
+  <!-- Legend -->
+  <rect x="40" y="580" width="1120" height="100" rx="8" fill="#2a2d3a" stroke="#2a2d3a" stroke-width="1"/>
+  <text x="60" y="605" fill="#e2e8f0" font-size="12" font-weight="bold">Legend</text>
+
+  <rect x="60" y="620" width="12" height="12" rx="3" fill="#22c55e"/>
+  <text x="80" y="631" fill="#94a3b8" font-size="10">NAI Control Plane (nai-admin)</text>
+
+  <rect x="280" y="620" width="12" height="12" rx="3" fill="#f59e0b"/>
+  <text x="300" y="631" fill="#94a3b8" font-size="10">MCP Servers (nai-admin-extensions)</text>
+
+  <rect x="520" y="620" width="12" height="12" rx="3" fill="#ef4444"/>
+  <text x="540" y="631" fill="#94a3b8" font-size="10">Model Serving (KServe)</text>
+
+  <rect x="700" y="620" width="12" height="12" rx="3" fill="#8b5cf6"/>
+  <text x="720" y="631" fill="#94a3b8" font-size="10">AI Gateway (Envoy)</text>
+
+  <rect x="60" y="645" width="12" height="12" rx="3" fill="#06b6d4"/>
+  <text x="80" y="656" fill="#94a3b8" font-size="10">Envoy Data Plane</text>
+
+  <rect x="280" y="645" width="12" height="12" rx="3" fill="#6366f1"/>
+  <text x="300" y="656" fill="#94a3b8" font-size="10">Gateway CRDs</text>
+</svg>
+</div>
+
+<div class="section">
+  <h2>How to read this diagram</h2>
+  <p>NAI creates Kubernetes resources across three namespaces. The <strong>Envoy Gateway</strong> (top) handles all traffic routing. The <strong>nai-admin</strong> namespace (left) contains the NAI control plane resources. The <strong>nai-admin-extensions</strong> namespace (right) contains MCP server deployments. <strong>KServe</strong> (bottom-left) serves local models via vLLM. The <strong>AI Gateway</strong> (bottom-right) handles unified endpoint routing and model load balancing.</p>
+</div>
+
+<div class="card-grid">
+  <div class="info-card">
+    <h3>Agent Gateway Features</h3>
+    <p>Provider, Unified Endpoint, MCP Server (local/remote), MCP Connector — each creates specific K8s resources managed by NAI controllers.</p>
+  </div>
+  <div class="info-card">
+    <h3>AI Inference Features</h3>
+    <p>Model (downloaded from HF/NVIDIA) creates a Model CR + PVC. Local Endpoint creates a KServe InferenceService with vLLM.</p>
+  </div>
+  <div class="info-card">
+    <h3>Key Insight</h3>
+    <p>NAI is a Kubernetes-native platform. Every UI action creates or modifies Kubernetes CRDs that are reconciled by NAI operators and Envoy Gateway controllers.</p>
+  </div>
+</div>
+</body>
+</html>
